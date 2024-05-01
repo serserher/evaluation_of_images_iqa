@@ -13,11 +13,14 @@ from sklearn.model_selection import KFold
 import math
 import os
 from torch.utils.data import ConcatDataset
+import copy
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 #PARAMETER INITIALIZATION
-batch_size = 4
-NUM_EPOCHS = 5
-INIT_LR = 1e-4
+batch_size = 100
+NUM_EPOCHS = 7
+INIT_LR = 1e-5
 
 #TO ADDRESS THE FEW DATA SAMPLES WE WILL USE CROSS VALIDATION 
 k_folds = 5
@@ -33,24 +36,38 @@ loss_function = CrossEntropyLoss()
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MEAN = [0.485, 0.456, 0.406]
 STD = [0.229, 0.224, 0.225]
+target_size = (768, 768)
+
 transforms_regular = transforms.Compose([
-	transforms.ToPILImage(),
-	transforms.ToTensor(),
-	transforms.Normalize(mean=MEAN, std=STD)
+    transforms.ToPILImage(),
+    transforms.Resize(target_size),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=MEAN, std=STD)
 ])
 
-# Define transformations for augmentation
 augmentation_transforms = transforms.Compose([
     transforms.ToPILImage(),
+    transforms.Resize(target_size),
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(10),
     transforms.ToTensor(),
     transforms.Normalize(mean=MEAN, std=STD)
 ])
 
-regular_dataset = ImageDataset ('/home/sergio/Thesis_Sergio/inference/output/inference', 'labels.csv', transforms=transforms_regular)
-augmented_dataset = ImageDataset ('/home/sergio/Thesis_Sergio/inference/output/inference', 'labels.csv', transforms=augmentation_transforms)
-dataset = ConcatDataset([regular_dataset, augmented_dataset])
+#dataset = ImageDataset ('/home/sergio/Thesis_Sergio/inference_repo/blockgen_inference/outputs/new_model_200infsteps/random_images_test', 'labels_new_test.csv', transforms = transforms_regular)
+
+dataset_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/101to200', 'shuffled_dataset/labels_101to200.csv', transforms=transforms_regular)
+dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400', 'shuffled_dataset/labels_301to400.csv', transforms=transforms_regular)
+dataset_1_aug = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/101to200', 'shuffled_dataset/labels_101to200.csv', transforms=augmentation_transforms)
+dataset_2_aug = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400', 'shuffled_dataset/labels_301to400.csv', transforms=augmentation_transforms)
+
+dataset_regular = ConcatDataset([dataset_1, dataset_2])
+dataset_augmented = ConcatDataset([dataset_1_aug, dataset_2_aug])
+dataset = ConcatDataset([dataset_regular, dataset_augmented])
+
+print(f'---------------------------------------------------')
+print(f'\n\nThe length of the dataset is: {len(dataset)}')
+print(f'---------------------------------------------------')
 
 #train_loader = DataLoader(dataset, batch_size = batch_size)
 
@@ -82,16 +99,16 @@ best_loss_criteria6 = math.inf
 best_loss_criteria7 = math.inf
 
 val_steps = (len(dataset)*(1/k_folds)) // batch_size
-
+best_performing_folds = [0,0,0,0,0,0,0]
 for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
     train_subsampler = torch.utils.data.SubsetRandomSampler(train_ids)
     val_subsampler = torch.utils.data.SubsetRandomSampler(val_ids)
     train_loader = torch.utils.data.DataLoader(
                       dataset, 
-                      batch_size=10, sampler=train_subsampler)
+                      batch_size=batch_size, sampler=train_subsampler)
     val_loader = torch.utils.data.DataLoader(
                       dataset,
-                      batch_size=10, sampler=val_subsampler)
+                      batch_size=batch_size, sampler=val_subsampler)
     #reset weights of the network to train it from scratch in each fold
     perf_evaluator_model.apply(weights_init)
     #DECLARE THE OPTIMIZER
@@ -125,7 +142,7 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
         total_val_loss_criteria6 = 0
         total_val_loss_criteria7 = 0
         
-        for (images, criteria) in train_loader:
+        for (images, criteria) in tqdm(train_loader):
             images = images.to(DEVICE)
             predictions = perf_evaluator_model(images)
             predictions_squeezed = [torch.squeeze(pred, dim=1) for pred in predictions] 
@@ -150,8 +167,8 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
             loss_criteria6 = loss_function(predictions_squeezed[5], criteria['Size relative to type'].to(DEVICE))
             train_correct_criteria6 += ((predictions_squeezed[5] >= 0.5) == criteria['Size relative to type'].to(DEVICE)).type(torch.float).sum().item()
 
-            loss_criteria7 = loss_function(predictions_squeezed[6], criteria['Conservation of color codin'].to(DEVICE))
-            train_correct_criteria7 += ((predictions_squeezed[6] >= 0.5) == criteria['Conservation of color codin'].to(DEVICE)).type(torch.float).sum().item()
+            loss_criteria7 = loss_function(predictions_squeezed[6], criteria['Conservation of color codi'].to(DEVICE))
+            train_correct_criteria7 += ((predictions_squeezed[6] >= 0.5) == criteria['Conservation of color codi'].to(DEVICE)).type(torch.float).sum().item()
 
             optimizer.zero_grad()
             loss_criteria1.backward()
@@ -173,15 +190,15 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
             
         for k in range(1, 8):
             var_name = "train_correct_criteria" + str(k)
-            H_train[fold][f"total_accuracy_criteria{k}"].append(globals()[var_name]/len(dataset))
+            H_train[fold][f"total_accuracy_criteria{k}"].append(globals()[var_name]/(len(dataset)*((k_folds-1)/k_folds)))
             
         overall_accuracy = (train_correct_criteria1 + train_correct_criteria2 + train_correct_criteria3 + train_correct_criteria4 + train_correct_criteria5 +train_correct_criteria6 + train_correct_criteria7)/(len(dataset)*7)
-        print(f"The accuracy of this batch during training is {overall_accuracy*100}%")
+        print(f"FOLD {fold}: The accuracy for epoch {e} during training is {overall_accuracy*100}%")
         with torch.no_grad():
 			# set the model in evaluation mode
             perf_evaluator_model.eval()
    
-            for (images, criteria) in val_loader:
+            for (images, criteria) in tqdm(val_loader):
                 
                 images = images.to(DEVICE)
                 predictions = perf_evaluator_model(images)
@@ -207,8 +224,8 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
                 loss_criteria6 = loss_function(predictions_squeezed[5], criteria['Size relative to type'].to(DEVICE))
                 val_correct_criteria6 += ((predictions_squeezed[5] >= 0.5) == criteria['Size relative to type'].to(DEVICE)).type(torch.float).sum().item()
 
-                loss_criteria7 = loss_function(predictions_squeezed[6], criteria['Conservation of color codin'].to(DEVICE))
-                val_correct_criteria7 += ((predictions_squeezed[6] >= 0.5) == criteria['Conservation of color codin'].to(DEVICE)).type(torch.float).sum().item()
+                loss_criteria7 = loss_function(predictions_squeezed[6], criteria['Conservation of color codi'].to(DEVICE))
+                val_correct_criteria7 += ((predictions_squeezed[6] >= 0.5) == criteria['Conservation of color codi'].to(DEVICE)).type(torch.float).sum().item()
                 
                 total_val_loss_criteria1 += loss_criteria1
                 total_val_loss_criteria2 += loss_criteria2
@@ -217,6 +234,9 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
                 total_val_loss_criteria5 += loss_criteria5
                 total_val_loss_criteria6 += loss_criteria6
                 total_val_loss_criteria7 += loss_criteria7
+        for k in range(1, 8):
+            var_name = "val_correct_criteria" + str(k)
+            H_val[fold][f"total_accuracy_criteria{k}"].append(globals()[var_name]/(len(dataset)/k_folds))
         #no need to do the average validation loss, so much better to check each criteria's loss and save the best layer for each criteria
         avg_val_loss_criteria1 = total_val_loss_criteria1 / val_steps
         avg_val_loss_criteria2 = total_val_loss_criteria2 / val_steps
@@ -225,6 +245,9 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
         avg_val_loss_criteria5 = total_val_loss_criteria5 / val_steps
         avg_val_loss_criteria6 = total_val_loss_criteria6 / val_steps
         avg_val_loss_criteria7 = total_val_loss_criteria7 / val_steps
+        for k in range(1, 8):
+            var_name = "val_correct_criteria" + str(k)
+            H_val[fold][f"total_loss_criteria{k}"].append(globals()[var_name])
         
         if e == NUM_EPOCHS - 1:
             for i in range (1, 8):
@@ -232,13 +255,14 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
                 best_loss = "best_loss_criteria" + str(i)
                 if "best_model_criteria" + str(i) not in globals():
                     globals()["best_model_criteria" +str(i)] = perf_evaluator_model
+                    best_performing_folds[i-1] = copy.deepcopy(fold)
                 else:
                     if globals()[avg_val_loss] < globals()[best_loss]:
                         best_model = globals()["best_model_criteria" +str(i)]
                         globals()[best_loss] = globals()[avg_val_loss]
                         print(f'Average loss during validation for the criteria {i}: {globals()[avg_val_loss]}')
                         best_model = perf_evaluator_model
-                
+                        best_performing_folds[i-1] = copy.deepcopy(fold)
 print("[INFO] saving performance evaluator model...")
 perf_evaluator_model.criteria1 = best_model_criteria1.criteria1   
 perf_evaluator_model.criteria2 = best_model_criteria2.criteria2        
@@ -260,6 +284,36 @@ model_path = os.path.join(output_dir, "performance_evaluator.pth")
 
 torch.save(perf_evaluator_model, model_path)
 
+#output folder initialization
+save_folder = "output plots/training_accuracies_validation"
+if not os.path.exists(save_folder):
+    os.makedirs(save_folder)
+    
+criteria_names = ["Relative position and orientation between neighboring buildings", 
+                  "Position and orientation of buildings in relation to closest roads", 
+                  "Building types in relation to underlying terrain type", 
+                  "Integrity of edges", 
+                  "Straightness of edges", 
+                  "Size relative to type", 
+                  "Conservation of color coding"]
+
+for i in range(1, 8):
+    plt.plot(H_val[best_performing_folds[i-1]][f"total_accuracy_criteria{i}"], label='Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.title(f'Accuracy Plot for the criterion: {criteria_names[i-1]}')
+    plt.legend()
+    plt.savefig(os.path.join(save_folder, f'best_performing_folds_accuracies_{criteria_names[i-1]}.png'))
+    plt.close()
+    #now the loss
+    plt.plot(H_val[best_performing_folds[i-1]][f"total_loss_criteria{i}"], label='Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.title(f'Loss Plot for the criterion: {criteria_names[i-1]}')
+    plt.legend()
+    plt.savefig(os.path.join(save_folder, f'best_performing_folds_losses_{criteria_names[i-1]}.png'))
+    plt.close()
+    
 """                
 total_loss_criteria1 = torch.tensor(total_loss_criteria1, device = 'cpu')
 plt.figure()

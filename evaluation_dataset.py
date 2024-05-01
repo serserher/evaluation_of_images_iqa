@@ -17,11 +17,19 @@ class ImageDataset(Dataset):
         self.criteriavalues_lists = self.criteria_labels.values.tolist()
         self.criteriavalues_lists[0].pop(0)
         self.criteriavalues = self.criteriavalues_lists[0]
-        
+        self.__mapindexes__()
+    def __mapindexes__(self):
+        self.indexes_mappped = []
+        for filename in os.listdir(self.path_to_images):
+            if filename.endswith('.png'):
+                image_number = int(filename.split('_')[-1].split('.')[0])
+                self.indexes_mappped.append(image_number)
+        self.indexes_mappped.sort()
     def __getitem__(self, index):
-        index = index + 1
+        working_index = self.indexes_mappped[index]
+        
         # grab the image, label, and its bounding box coordinates
-        image_path = os.path.join(self.path_to_images, '_' + f"{index}" + '.jpg')
+        image_path = os.path.join(self.path_to_images, '_' + f"{working_index}" + '.png')
         image = io.imread(image_path)
         image = torch.tensor(image)
         image = image.permute(2, 0, 1)
@@ -31,9 +39,9 @@ class ImageDataset(Dataset):
         i = 0
         while i<7:
             for header in self.headers:
-                if ('_' + f"{index}" + '.jpg') in header:
+                if ('_' + f"{working_index}" + '.png') in header:
                     label_index = self.headers.index(header)
-                    header_name = header.strip('_' + f"{index}" + '.jpg')
+                    header_name = header.strip('_' + f"{working_index}" + '.png')
                     if header_name not in label_dic:
                         label_dic[header_name] = float(self.criteriavalues[label_index])
                     i+=1
@@ -46,9 +54,4 @@ class ImageDataset(Dataset):
     def __len__(self):
         # return the size of the dataset
         return int(len(self.criteriavalues)/7)
-"""      
-dataset = ImageDataset ('/home/sergio/Thesis_Sergio/inference/output/inference', 'labels.csv')
-[image, labels] = dataset.__getitem__(5)
-io.imsave(f'image_2.jpg', image)
-print(dataset.__len__())
-"""
+

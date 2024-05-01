@@ -1,2 +1,9 @@
 dummy_name.png
 output model
+output plots
+shuffled_dataset
+shuffled_dataset_testing
+image_2.jpg
+labels_new_test_nojoining.csv
+labels_new_test.csv
+labels.csv
