@@ -23,7 +23,7 @@ transforms_regular = transforms.Compose([
     transforms.Normalize(mean=MEAN, std=STD)
 ])
 
-TestDataset = ImageDataset('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/101to200', 'shuffled_dataset/labels_101to200.csv', transforms=transforms_regular)
+TestDataset = ImageDataset('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/76to100', 'shuffled_dataset_testing/labels_76to100.csv', transforms=transforms_regular)
 
 criteria_names = ["Relative position and orientation between neighboring buildings", "Position and orientation of buildings in relation to closest road/s", "Building types in relation to underlying terrain type", 
                             "Integrity of edges", "Straightness of edges", "Size relative to type", "Conservation of color codi"]
@@ -127,7 +127,7 @@ for criterion_name in criteria_names:
         plt.close()
     else:
         # Save the plot with the criterion name as the filename
-        filename = os.path.join(output_folder, f"{criterion_name}_confusion_matrix.png")
+        filename = os.path.join(output_folder, f"{criterion_name}_confusion_matrix_Eric.png")
         plt.savefig(filename)
         plt.close()
 

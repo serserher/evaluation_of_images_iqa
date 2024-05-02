@@ -7,8 +7,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from torch.utils.data import ConcatDataset
 
-dataset = ImageDataset ('/home/sergio/Thesis_Sergio/inference/output/inference', 'labels.csv')
-#dataset_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/101to200', 'shuffled_dataset/labels_101to200.csv')
+#dataset = ImageDataset ('/home/sergio/Thesis_Sergio/inference/output/inference', 'labels.csv')
+dataset = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400', 'shuffled_dataset/labels_301to400.csv')
 #dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400', 'shuffled_dataset/labels_301to400.csv')
 #dataset = ConcatDataset([dataset_1, dataset_2])
 
@@ -29,7 +29,6 @@ for i in range(len(dataset)):
         avg += i/len(aux_list)
     aux_list.append(avg)
     labels_list.append(aux_list.copy())
-print(labels_list)
 #headers = ["Relative position and orientation between neighboring buildings", "Position and orientation of buildings in relation to closest road/s", "Building types in relation to underlying terrain type",
            #"Integrity of edges", "Straightness of edges", "Size relative to type", "Conservation of color codin", "Average rating of the image"]
 headers = ["c1", "c2", "c3","c4","c5","c6","c7","avg"]
@@ -45,7 +44,7 @@ print(correlation_matrix)
 plt.figure(figsize=(10, 8))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
 plt.title('Correlation Matrix')
-plt.savefig('./output plots/correlation_matrix.png')
+plt.savefig('./output plots/correlation_matrix_dataset_eval_Eric.png')
 
 
 # Calculate the average rating for each criterion

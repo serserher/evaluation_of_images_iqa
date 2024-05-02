@@ -83,13 +83,14 @@ class PerformancePredictor(Module):
 		
 	def forward(self, x):
 		# pass the inputs through the base model and then obtain predictions from two different branches of the network
-			features = self.BaseModel(x)
-			perf1 = self.criteria1(features)
-			perf2 = self.criteria2(features)
-			perf3 = self.criteria3(features)
-			perf4 = self.criteria4(features)
-			perf5 = self.criteria5(features)
-			perf6 = self.criteria6(features)
-			perf7 = self.criteria7(features)
-			performance = [perf1, perf2, perf3, perf4, perf5, perf6, perf7]
-			return (performance)
+		features = self.BaseModel(x)
+		perf1 = torch.round(torch.sigmoid(self.criteria1(features)))
+		perf2 = torch.round(torch.sigmoid(self.criteria2(features)))
+		perf3 = torch.round(torch.sigmoid(self.criteria3(features)))
+		perf4 = torch.round(torch.sigmoid(self.criteria4(features)))
+		perf5 = torch.round(torch.sigmoid(self.criteria5(features)))
+		perf6 = torch.round(torch.sigmoid(self.criteria6(features)))
+		perf7 = torch.round(torch.sigmoid(self.criteria7(features)))
+
+		performance = [perf1, perf2, perf3, perf4, perf5, perf6, perf7]
+		return (performance)
