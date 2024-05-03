@@ -43,7 +43,10 @@ class ImageDataset(Dataset):
                     label_index = self.headers.index(header)
                     header_name = header.strip('_' + f"{working_index}" + '.png')
                     if header_name not in label_dic:
-                        label_dic[header_name] = float(self.criteriavalues[label_index])
+                        if (self.criteriavalues[label_index]) == 1:
+                            label_dic[header_name] = torch.tensor([1, 0])
+                        else:
+                            label_dic[header_name] = torch.tensor([0, 1])                            
                     i+=1
 
         # transpose the image such that its channel dimension becomes the leading one
@@ -54,4 +57,3 @@ class ImageDataset(Dataset):
     def __len__(self):
         # return the size of the dataset
         return int(len(self.criteriavalues)/7)
-

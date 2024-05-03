@@ -5,7 +5,7 @@ from tqdm import tqdm
 from torchvision.models import resnet50, resnet18
 import torch
 from torchvision import transforms
-from torch.nn import CrossEntropyLoss
+from torch.nn import CrossEntropyLoss, BCELoss
 import torch.nn as nn
 from torch.optim import Adam
 from matplotlib import pyplot as plt
@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 from torch.optim.lr_scheduler import LambdaLR
 
 #PARAMETER INITIALIZATION
-batch_size = 20
+batch_size = 40
 NUM_EPOCHS = 10
 INIT_LR = 2e-4
 
@@ -36,7 +36,7 @@ def weights_init(m):
     if isinstance(m, nn.Linear):
         torch.nn.init.xavier_uniform(m.weight.data)
         
-loss_function = CrossEntropyLoss()
+loss_function = BCELoss()
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -70,68 +70,6 @@ dataset_2_aug = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_da
 #dataset_regular = ConcatDataset([dataset_1, dataset_2])
 #dataset_augmented = ConcatDataset([dataset_1_aug, dataset_2_aug])
 dataset = ConcatDataset([dataset_2, dataset_2_aug])
-"""
-label_count = {'c1' :{},'c2' :{},'c3' :{},'c4' :{},'c5' :{},'c6' :{},'c7' :{}}
-for i in range(len(dataset)):
-    # Extract label names for each criterion
-    label_name_1 = dataset[i][1]["Relative position and orientation between neighboring buildings"]
-    label_name_2 = dataset[i][1]["Position and orientation of buildings in relation to closest road/s"]
-    label_name_3 = dataset[i][1]["Building types in relation to underlying terrain type"]
-    label_name_4 = dataset[i][1]["Integrity of edges"]
-    label_name_5 = dataset[i][1]["Straightness of edges"]
-    label_name_6 = dataset[i][1]["Size relative to type"]
-    label_name_7 = dataset[i][1]["Conservation of color codi"]
-
-    # Update label counts for each criterion
-    if label_name_1 not in label_count['c1']:
-        label_count['c1'][label_name_1] = 1
-    else:
-        label_count['c1'][label_name_1] += 1
-
-    if label_name_2 not in label_count['c2']:
-        label_count['c2'][label_name_2] = 1
-    else:
-        label_count['c2'][label_name_2] += 1
-
-    if label_name_3 not in label_count['c3']:
-        label_count['c3'][label_name_3] = 1
-    else:
-        label_count['c3'][label_name_3] += 1
-
-    if label_name_4 not in label_count['c4']:
-        label_count['c4'][label_name_4] = 1
-    else:
-        label_count['c4'][label_name_4] += 1
-
-    if label_name_5 not in label_count['c5']:
-        label_count['c5'][label_name_5] = 1
-    else:
-        label_count['c5'][label_name_5] += 1
-
-    if label_name_6 not in label_count['c6']:
-        label_count['c6'][label_name_6] = 1
-    else:
-        label_count['c6'][label_name_6] += 1
-
-    if label_name_7 not in label_count['c7']:
-        label_count['c7'][label_name_7] = 1
-    else:
-        label_count['c7'][label_name_7] += 1
-print(label_count)
-
-loss_functions = []
-class_weights = []
-
-for i in range(1, 8):
-    class_label_0 = label_count[f'c{i}'][0.0]
-    class_label_1 = label_count[f'c{i}'][1.0]
-
-    class_weight = torch.FloatTensor([1 / class_label_0, 1 / class_label_1])
-    class_weights.append(class_weight)
-
-    loss_function = CrossEntropyLoss(weight=class_weight)
-    loss_functions.append(loss_function)
-"""
 
 print(f'---------------------------------------------------')
 print(f'\n\nThe length of the dataset is: {len(dataset)}')
@@ -216,41 +154,32 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
         total_val_loss_criteria5 = 0
         total_val_loss_criteria6 = 0
         total_val_loss_criteria7 = 0
-        
+
         for (images, criteria) in tqdm(train_loader):
             images = images.to(DEVICE)
             predictions = perf_evaluator_model(images)
             predictions_squeezed = [torch.squeeze(pred, dim=1) for pred in predictions] 
-            
             #we now calculate the losses
+            loss_criteria1 = loss_function(predictions_squeezed[0], criteria['Relative position and orientation between neighboring buildings'].float().to(DEVICE))
+            train_correct_criteria1 += ((predictions_squeezed[0] > 0.5).float() == criteria['Relative position and orientation between neighboring buildings'].float().to(DEVICE)).all(dim=1).sum().item()
 
-            loss_criteria1 = loss_function(predictions_squeezed[0], criteria['Relative position and orientation between neighboring buildings'].to(DEVICE))
-            #train_correct_criteria1 += ((predictions_squeezed[0] >= 0.5) == criteria['Relative position and orientation between neighboring buildings'].to(DEVICE)).type(torch.float).sum().item()
-            train_correct_criteria1 += (predictions_squeezed[0] == criteria['Relative position and orientation between neighboring buildings'].to(DEVICE)).type(torch.float).sum().item()
-            
-            loss_criteria2 = loss_function(predictions_squeezed[1], criteria['Position and orientation of buildings in relation to closest road/s'].to(DEVICE))
-            #train_correct_criteria2 += ((predictions_squeezed[1] >= 0.5) == criteria['Position and orientation of buildings in relation to closest road/s'].to(DEVICE)).type(torch.float).sum().item()
-            train_correct_criteria2 += (predictions_squeezed[1] == criteria['Position and orientation of buildings in relation to closest road/s'].to(DEVICE)).type(torch.float).sum().item()
-            
-            loss_criteria3 = loss_function(predictions_squeezed[2], criteria['Building types in relation to underlying terrain type'].to(DEVICE))
-            #train_correct_criteria3 += ((predictions_squeezed[2] >= 0.5) == criteria['Building types in relation to underlying terrain type'].to(DEVICE)).type(torch.float).sum().item()
-            train_correct_criteria3 += (predictions_squeezed[2] == criteria['Building types in relation to underlying terrain type'].to(DEVICE)).type(torch.float).sum().item()
+            loss_criteria2 = loss_function(predictions_squeezed[1], criteria['Position and orientation of buildings in relation to closest road/s'].float().to(DEVICE))
+            train_correct_criteria2 += ((predictions_squeezed[1] > 0.5).float() == criteria['Position and orientation of buildings in relation to closest road/s'].float().to(DEVICE)).all(dim=1).sum().item()
 
-            loss_criteria4 = loss_function(predictions_squeezed[3], criteria['Integrity of edges'].to(DEVICE))
-            #train_correct_criteria4 += ((predictions_squeezed[3] >= 0.5) == criteria['Integrity of edges'].to(DEVICE)).type(torch.float).sum().item()
-            train_correct_criteria4 += (predictions_squeezed[3] == criteria['Integrity of edges'].to(DEVICE)).type(torch.float).sum().item()
+            loss_criteria3 = loss_function(predictions_squeezed[2], criteria['Building types in relation to underlying terrain type'].float().to(DEVICE))
+            train_correct_criteria3 += ((predictions_squeezed[2] > 0.5).float() == criteria['Building types in relation to underlying terrain type'].float().to(DEVICE)).all(dim=1).sum().item()
 
-            loss_criteria5 = loss_function(predictions_squeezed[4], criteria['Straightness of edges'].to(DEVICE))
-            #train_correct_criteria5 += ((predictions_squeezed[4] >= 0.5) == criteria['Straightness of edges'].to(DEVICE)).type(torch.float).sum().item()
-            train_correct_criteria5 += (predictions_squeezed[4] == criteria['Straightness of edges'].to(DEVICE)).type(torch.float).sum().item()
+            loss_criteria4 = loss_function(predictions_squeezed[3], criteria['Integrity of edges'].float().to(DEVICE))
+            train_correct_criteria4 += ((predictions_squeezed[3] > 0.5).float() == criteria['Integrity of edges'].float().to(DEVICE)).all(dim=1).sum().item()
 
-            loss_criteria6 = loss_function(predictions_squeezed[5], criteria['Size relative to type'].to(DEVICE))
-            #train_correct_criteria6 += ((predictions_squeezed[5] >= 0.5) == criteria['Size relative to type'].to(DEVICE)).type(torch.float).sum().item()
-            train_correct_criteria6 += (predictions_squeezed[5] == criteria['Size relative to type'].to(DEVICE)).type(torch.float).sum().item()
+            loss_criteria5 = loss_function(predictions_squeezed[4], criteria['Straightness of edges'].float().to(DEVICE))
+            train_correct_criteria5 += ((predictions_squeezed[4] > 0.5).float() == criteria['Straightness of edges'].float().to(DEVICE)).all(dim=1).sum().item()
 
-            loss_criteria7 = loss_function(predictions_squeezed[6], criteria['Conservation of color codi'].to(DEVICE))
-            #train_correct_criteria7 += ((predictions_squeezed[6] >= 0.5) == criteria['Conservation of color codi'].to(DEVICE)).type(torch.float).sum().item()
-            train_correct_criteria7 += (predictions_squeezed[6] == criteria['Conservation of color codi'].to(DEVICE)).type(torch.float).sum().item()
+            loss_criteria6 = loss_function(predictions_squeezed[5], criteria['Size relative to type'].float().to(DEVICE))
+            train_correct_criteria6 += ((predictions_squeezed[5] > 0.5).float() == criteria['Size relative to type'].float().to(DEVICE)).all(dim=1).sum().item()
+
+            loss_criteria7 = loss_function(predictions_squeezed[6], criteria['Conservation of color codi'].float().to(DEVICE))
+            train_correct_criteria7 += ((predictions_squeezed[6] > 0.5).float() == criteria['Conservation of color codi'].float().to(DEVICE)).all(dim=1).sum().item()
 
             optimizer.zero_grad()
             loss_criteria1.backward()
@@ -274,7 +203,7 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
             var_name = "train_correct_criteria" + str(k)
             H_train[fold][f"total_accuracy_criteria{k}"].append(globals()[var_name]/(len(dataset)*((k_folds-1)/k_folds)))
             
-        overall_accuracy = (train_correct_criteria1 + train_correct_criteria2 + train_correct_criteria3 + train_correct_criteria4 + train_correct_criteria5 +train_correct_criteria6 + train_correct_criteria7)/(len(dataset)*7)
+        overall_accuracy = (train_correct_criteria1 + train_correct_criteria2 + train_correct_criteria3 + train_correct_criteria4 + train_correct_criteria5 +train_correct_criteria6 + train_correct_criteria7)/(len(train_loader)*batch_size*7)
         print(f"FOLD {fold}: The accuracy for epoch {e} during training is {overall_accuracy*100}%")
         with torch.no_grad():
 			# set the model in evaluation mode
@@ -288,34 +217,26 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
                 
                 #we now calculate the losses
 
-                loss_criteria1 = loss_function(predictions_squeezed[0], criteria['Relative position and orientation between neighboring buildings'].to(DEVICE))
-                #val_correct_criteria1 += ((predictions_squeezed[0] >= 0.5) == criteria['Relative position and orientation between neighboring buildings'].to(DEVICE)).type(torch.float).sum().item()
-                val_correct_criteria1 += (predictions_squeezed[0] == criteria['Relative position and orientation between neighboring buildings'].to(DEVICE)).type(torch.float).sum().item()
-                
-                loss_criteria2 = loss_function(predictions_squeezed[1], criteria['Position and orientation of buildings in relation to closest road/s'].to(DEVICE))
-                #val_correct_criteria2 += ((predictions_squeezed[1] >= 0.5) == criteria['Position and orientation of buildings in relation to closest road/s'].to(DEVICE)).type(torch.float).sum().item()
-                val_correct_criteria2 += (predictions_squeezed[1] == criteria['Position and orientation of buildings in relation to closest road/s'].to(DEVICE)).type(torch.float).sum().item()
-                
-                loss_criteria3 = loss_function(predictions_squeezed[2], criteria['Building types in relation to underlying terrain type'].to(DEVICE))
-                #val_correct_criteria3 += ((predictions_squeezed[2] >= 0.5) == criteria['Building types in relation to underlying terrain type'].to(DEVICE)).type(torch.float).sum().item()
-                val_correct_criteria3 += (predictions_squeezed[2] == criteria['Building types in relation to underlying terrain type'].to(DEVICE)).type(torch.float).sum().item()
+                loss_criteria1 = loss_function(predictions_squeezed[0], criteria['Relative position and orientation between neighboring buildings'].float().to(DEVICE))
+                val_correct_criteria1 += ((predictions_squeezed[0] > 0.5).float() == criteria['Relative position and orientation between neighboring buildings'].float().to(DEVICE)).all(dim=1).sum().item()
 
-                loss_criteria4 = loss_function(predictions_squeezed[3], criteria['Integrity of edges'].to(DEVICE))
-                #val_correct_criteria4 += ((predictions_squeezed[3] >= 0.5) == criteria['Integrity of edges'].to(DEVICE)).type(torch.float).sum().item()
-                val_correct_criteria4 += (predictions_squeezed[3] == criteria['Integrity of edges'].to(DEVICE)).type(torch.float).sum().item()
+                loss_criteria2 = loss_function(predictions_squeezed[1], criteria['Position and orientation of buildings in relation to closest road/s'].float().to(DEVICE))
+                val_correct_criteria2 += ((predictions_squeezed[1] > 0.5).float() == criteria['Position and orientation of buildings in relation to closest road/s'].float().to(DEVICE)).all(dim=1).sum().item()
 
-                loss_criteria5 = loss_function(predictions_squeezed[4], criteria['Straightness of edges'].to(DEVICE))
-                #val_correct_criteria5 += ((predictions_squeezed[4] >= 0.5) == criteria['Straightness of edges'].to(DEVICE)).type(torch.float).sum().item()
-                val_correct_criteria5 += (predictions_squeezed[4] == criteria['Straightness of edges'].to(DEVICE)).type(torch.float).sum().item()
+                loss_criteria3 = loss_function(predictions_squeezed[2], criteria['Building types in relation to underlying terrain type'].float().to(DEVICE))
+                val_correct_criteria3 += ((predictions_squeezed[2] > 0.5).float() == criteria['Building types in relation to underlying terrain type'].float().to(DEVICE)).all(dim=1).sum().item()
 
-                loss_criteria6 = loss_function(predictions_squeezed[5], criteria['Size relative to type'].to(DEVICE))
-                #val_correct_criteria6 += ((predictions_squeezed[5] >= 0.5) == criteria['Size relative to type'].to(DEVICE)).type(torch.float).sum().item()
-                val_correct_criteria6 += (predictions_squeezed[5] == criteria['Size relative to type'].to(DEVICE)).type(torch.float).sum().item()
+                loss_criteria4 = loss_function(predictions_squeezed[3], criteria['Integrity of edges'].float().to(DEVICE))
+                val_correct_criteria4 += ((predictions_squeezed[3] > 0.5).float() == criteria['Integrity of edges'].float().to(DEVICE)).all(dim=1).sum().item()
 
-                loss_criteria7 = loss_function(predictions_squeezed[6], criteria['Conservation of color codi'].to(DEVICE))
-                #val_correct_criteria7 += ((predictions_squeezed[6] >= 0.5) == criteria['Conservation of color codi'].to(DEVICE)).type(torch.float).sum().item()
-                val_correct_criteria7 += (predictions_squeezed[6] == criteria['Conservation of color codi'].to(DEVICE)).type(torch.float).sum().item()
-                
+                loss_criteria5 = loss_function(predictions_squeezed[4], criteria['Straightness of edges'].float().to(DEVICE))
+                val_correct_criteria5 += ((predictions_squeezed[4] > 0.5).float() == criteria['Straightness of edges'].float().to(DEVICE)).all(dim=1).sum().item()
+
+                loss_criteria6 = loss_function(predictions_squeezed[5], criteria['Size relative to type'].float().to(DEVICE))
+                val_correct_criteria6 += ((predictions_squeezed[5] > 0.5).float() == criteria['Size relative to type'].float().to(DEVICE)).all(dim=1).sum().item()
+
+                loss_criteria7 = loss_function(predictions_squeezed[6], criteria['Conservation of color codi'].float().to(DEVICE))
+                val_correct_criteria7 += ((predictions_squeezed[6] > 0.5).float() == criteria['Conservation of color codi'].float().to(DEVICE)).all(dim=1).sum().item()
                 total_val_loss_criteria1 += loss_criteria1
                 total_val_loss_criteria2 += loss_criteria2
                 total_val_loss_criteria3 += loss_criteria3

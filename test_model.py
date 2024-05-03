@@ -35,7 +35,7 @@ recalls_dict = {criterion: [] for criterion in criteria_names}
 accuracies_dict = {criterion: [] for criterion in criteria_names}
 test_loader = torch.utils.data.DataLoader(TestDataset, batch_size=50, shuffle = True)
 
-perf_evaluator_model = torch.load('output model/performance_evaluator.pth')
+perf_evaluator_model = torch.load('output model/performance_evaluator_Eric_Dataset.pth')
 
 # Loop through the batches in the test loader
 for (images, criteria) in tqdm(test_loader):
@@ -47,10 +47,23 @@ for (images, criteria) in tqdm(test_loader):
     for i in range(len(predictions_squeezed)):
         criterion_name = criteria_names[i]  # Assuming the criteria are numbered from 1 to 7
         # Calculate confusion matrix
-        pred_labels = (predictions_squeezed[i] >= 0.5).cpu().numpy().flatten()
-        true_labels = criteria[criterion_name].cpu().numpy().flatten()
-        if any(math.isnan(x) for x in true_labels):
-            true_labels = np.nan_to_num(true_labels, nan=0)
+            # Reshape the arrays to 2D
+        pred_labels = (predictions_squeezed[i] > 0.5).float().cpu().numpy()
+        true_labels = criteria[criterion_name].float().cpu().numpy()
+        print(pred_labels, true_labels)    
+        
+        pred_labels = (predictions_squeezed[i] > 0.5).float().cpu().numpy().reshape(-1, 2)
+        true_labels = criteria[criterion_name].float().cpu().numpy().reshape(-1, 2)
+        # Invert ones to zeroes and vice versa
+        pred_labels = 1 - pred_labels
+        true_labels = 1 - true_labels
+        # Apply argmax to each sub-element
+        pred_labels = np.argmax(pred_labels, axis=1)
+        true_labels = np.argmax(true_labels, axis=1)
+        
+        print(pred_labels, true_labels)
+      
+        true_labels = np.nan_to_num(true_labels, nan=0)
         confusion_matrices_dict[criterion_name].append(confusion_matrix(true_labels, pred_labels))
 
         # Calculate F1 score
