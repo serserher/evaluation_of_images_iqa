@@ -70,68 +70,6 @@ dataset_2_aug = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_da
 #dataset_regular = ConcatDataset([dataset_1, dataset_2])
 #dataset_augmented = ConcatDataset([dataset_1_aug, dataset_2_aug])
 dataset = ConcatDataset([dataset_2, dataset_2_aug])
-"""     
-label_count = {'c1' :{},'c2' :{},'c3' :{},'c4' :{},'c5' :{},'c6' :{},'c7' :{}}
-for i in range(len(dataset)):
-    # Extract label names for each criterion
-    label_name_1 = dataset[i][1]["Relative position and orientation between neighboring buildings"]
-    label_name_2 = dataset[i][1]["Position and orientation of buildings in relation to closest road/s"]
-    label_name_3 = dataset[i][1]["Building types in relation to underlying terrain type"]
-    label_name_4 = dataset[i][1]["Integrity of edges"]
-    label_name_5 = dataset[i][1]["Straightness of edges"]
-    label_name_6 = dataset[i][1]["Size relative to type"]
-    label_name_7 = dataset[i][1]["Conservation of color codi"]
-
-    # Update label counts for each criterion
-    if label_name_1 not in label_count['c1']:
-        label_count['c1'][label_name_1] = 1
-    else:
-        label_count['c1'][label_name_1] += 1
-
-    if label_name_2 not in label_count['c2']:
-        label_count['c2'][label_name_2] = 1
-    else:
-        label_count['c2'][label_name_2] += 1
-
-    if label_name_3 not in label_count['c3']:
-        label_count['c3'][label_name_3] = 1
-    else:
-        label_count['c3'][label_name_3] += 1
-
-    if label_name_4 not in label_count['c4']:
-        label_count['c4'][label_name_4] = 1
-    else:
-        label_count['c4'][label_name_4] += 1
-
-    if label_name_5 not in label_count['c5']:
-        label_count['c5'][label_name_5] = 1
-    else:
-        label_count['c5'][label_name_5] += 1
-
-    if label_name_6 not in label_count['c6']:
-        label_count['c6'][label_name_6] = 1
-    else:
-        label_count['c6'][label_name_6] += 1
-
-    if label_name_7 not in label_count['c7']:
-        label_count['c7'][label_name_7] = 1
-    else:
-        label_count['c7'][label_name_7] += 1
-print(label_count)
-
-loss_functions = []
-class_weights = []
-
-for i in range(1, 8):
-    class_label_0 = label_count[f'c{i}'][0.0]
-    class_label_1 = label_count[f'c{i}'][1.0]
-
-    class_weight = torch.FloatTensor([1 / class_label_0, 1 / class_label_1])
-    class_weights.append(class_weight)
-
-    loss_function = CrossEntropyLoss(weight=class_weight)
-    loss_functions.append(loss_function)
-"""
 
 print(f'---------------------------------------------------')
 print(f'\n\nThe length of the dataset is: {len(dataset)}')

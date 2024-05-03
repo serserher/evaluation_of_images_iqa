@@ -57,4 +57,3 @@ class ImageDataset(Dataset):
     def __len__(self):
         # return the size of the dataset
         return int(len(self.criteriavalues)/7)
-

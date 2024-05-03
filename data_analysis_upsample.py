@@ -8,34 +8,36 @@ import matplotlib.pyplot as plt
 from torch.utils.data import ConcatDataset
 
 #dataset = ImageDataset ('/home/sergio/Thesis_Sergio/inference/output/inference', 'labels.csv')
-dataset_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400', 'shuffled_dataset/labels_301to400.csv')
-dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/experiment1', '/home/sergio/Thesis_Sergio/evaluation/upsampled/experiment1/upsampled_labels.csv')
-dataset = ConcatDataset([dataset_1, dataset_2])
+upsample_config = [("Conservation of color coding", 0)]
+
+dataset = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400', 'shuffled_dataset/labels_301to400.csv',  upsample_list=upsample_config, upsample_factor = 3)
+#dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400', 'shuffled_dataset/labels_301to400.csv')
+#dataset = ConcatDataset([dataset_1, dataset_2])
+dataset.upsample()
 
 labels_list = []
-#print(len(dataset))
+print(len(dataset))
 for i in range(len(dataset)):
-    #print(i)
+    print(i)
     aux_list = []
-    label_value = 1.0 if dataset[i][1]["Relative position and orientation between neighboring buildings"].tolist() == [1, 0] else 0.0
+    label_value = 1.0 if dataset[i][1]["Relative position and orientation between neighboring buildings"] == [1, 0] else 0.0
     aux_list.append(label_value)
-    label_value = 1.0 if dataset[i][1]["Position and orientation of buildings in relation to closest road/s"].tolist() == [1, 0] else 0.0
+    label_value = 1.0 if dataset[i][1]["Position and orientation of buildings in relation to closest road/s"] == [1, 0] else 0.0
     aux_list.append(label_value)
-    label_value = 1.0 if dataset[i][1]["Building types in relation to underlying terrain type"].tolist() == [1, 0] else 0.0
+    label_value = 1.0 if dataset[i][1]["Building types in relation to underlying terrain type"] == [1, 0] else 0.0
     aux_list.append(label_value)
-    label_value = 1.0 if dataset[i][1]["Integrity of edges"].tolist() == [1, 0] else 0.0
+    label_value = 1.0 if dataset[i][1]["Integrity of edges"] == [1, 0] else 0.0
     aux_list.append(label_value)
-    label_value = 1.0 if dataset[i][1]["Straightness of edges"].tolist() == [1, 0] else 0.0
+    label_value = 1.0 if dataset[i][1]["Straightness of edges"] == [1, 0] else 0.0
     aux_list.append(label_value)
-    label_value = 1.0 if dataset[i][1]["Size relative to type"].tolist() == [1, 0] else 0.0
+    label_value = 1.0 if dataset[i][1]["Size relative to type"] == [1, 0] else 0.0
     aux_list.append(label_value)
-    label_value = 1.0 if dataset[i][1]["Conservation of color codi"].tolist() == [1, 0] else 0.0
+    label_value = 1.0 if dataset[i][1]["Conservation of color codi"] == [1, 0] else 0.0
     aux_list.append(label_value)
     avg = 0
     for i in aux_list:
         avg += i/len(aux_list)
     aux_list.append(avg)
-    #print(aux_list)
     labels_list.append(aux_list.copy())
 #headers = ["Relative position and orientation between neighboring buildings", "Position and orientation of buildings in relation to closest road/s", "Building types in relation to underlying terrain type",
            #"Integrity of edges", "Straightness of edges", "Size relative to type", "Conservation of color codin", "Average rating of the image"]
@@ -52,7 +54,7 @@ print(correlation_matrix)
 plt.figure(figsize=(10, 8))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
 plt.title('Correlation Matrix')
-plt.savefig('./output plots/correlation_matrix_dataset_eval_Eric.png')
+plt.savefig('./output plots/upsampled/correlation_matrix_dataset_eval_Eric.png')
 
 
 # Calculate the average rating for each criterion
