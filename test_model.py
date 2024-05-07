@@ -10,6 +10,7 @@ import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import ConfusionMatrixDisplay
+from torch.utils.data import ConcatDataset
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MEAN = [0.485, 0.456, 0.406]
@@ -23,10 +24,15 @@ transforms_regular = transforms.Compose([
     transforms.Normalize(mean=MEAN, std=STD)
 ])
 
-TestDataset = ImageDataset('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/76to100', 'shuffled_dataset_testing/labels_76to100.csv', transforms=transforms_regular)
+dataset_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/First25', 'shuffled_dataset_testing/labels_First25.csv', transforms = transforms_regular)
+dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/26to50', 'shuffled_dataset_testing/labels_26to50.csv', transforms = transforms_regular)
+dataset_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/51to75', 'shuffled_dataset_testing/labels_51to75.csv', transforms = transforms_regular)
+dataset_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/76to100', 'shuffled_dataset_testing/labels_76to100.csv', transforms = transforms_regular)
 
-criteria_names = ["Relative position and orientation between neighboring buildings", "Position and orientation of buildings in relation to closest road/s", "Building types in relation to underlying terrain type", 
-                            "Integrity of edges", "Straightness of edges", "Size relative to type", "Conservation of color codi"]
+TestDataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4])
+
+criteria_names = ["Relative position and orientation between neighboring buildings", "Position and orientation of buildings in relation to closest road/s", 
+                  "Integrity of edges", "Straightness of edges"]
 # Initialize dictionaries to store evaluation results for each criterion
 confusion_matrices_dict = {criterion: [] for criterion in criteria_names}
 f1_scores_dict = {criterion: [] for criterion in criteria_names}
@@ -35,7 +41,7 @@ recalls_dict = {criterion: [] for criterion in criteria_names}
 accuracies_dict = {criterion: [] for criterion in criteria_names}
 test_loader = torch.utils.data.DataLoader(TestDataset, batch_size=50, shuffle = True)
 
-perf_evaluator_model = torch.load('output model/performance_evaluator_Eric_Dataset.pth')
+perf_evaluator_model = torch.load('output model Resnet 50/performance_evaluator_LR1e4_Dropout5_MoreLayers.pth')
 
 # Loop through the batches in the test loader
 for (images, criteria) in tqdm(test_loader):
@@ -45,26 +51,22 @@ for (images, criteria) in tqdm(test_loader):
 
     # Loop through each criterion and calculate evaluation metrics
     for i in range(len(predictions_squeezed)):
-        criterion_name = criteria_names[i]  # Assuming the criteria are numbered from 1 to 7
+        criterion_name = criteria_names[i]  # Assuming the criteria are numbered from 1 to 4
         # Calculate confusion matrix
             # Reshape the arrays to 2D
         pred_labels = (predictions_squeezed[i] > 0.5).float().cpu().numpy()
-        true_labels = criteria[criterion_name].float().cpu().numpy()
-        print(pred_labels, true_labels)    
-        
-        pred_labels = (predictions_squeezed[i] > 0.5).float().cpu().numpy().reshape(-1, 2)
-        true_labels = criteria[criterion_name].float().cpu().numpy().reshape(-1, 2)
+        true_labels = criteria[criterion_name].float().cpu().numpy()    
+    
         # Invert ones to zeroes and vice versa
         pred_labels = 1 - pred_labels
         true_labels = 1 - true_labels
+        single_label_pred = np.argmax(pred_labels, axis=1)
+        single_label_true = np.argmax(true_labels, axis=1)
+    
+
         # Apply argmax to each sub-element
-        pred_labels = np.argmax(pred_labels, axis=1)
-        true_labels = np.argmax(true_labels, axis=1)
-        
-        print(pred_labels, true_labels)
-      
         true_labels = np.nan_to_num(true_labels, nan=0)
-        confusion_matrices_dict[criterion_name].append(confusion_matrix(true_labels, pred_labels))
+        confusion_matrices_dict[criterion_name].append(confusion_matrix(single_label_true, single_label_pred))
 
         # Calculate F1 score
         f1_scores_dict[criterion_name].append(f1_score(true_labels, pred_labels, average='macro'))
@@ -113,11 +115,9 @@ print("Overall Average Recall:", overall_recall)
 print("Overall Average Accuracy:", overall_accuracy)
 
 
-experiment_id = "testing the test"  # Replace this with your unique identifier
+experiment_id = "MobileNetV2"  # Replace this with your unique identifier
 output_folder = os.path.join("output plots", experiment_id)
 os.makedirs(output_folder, exist_ok=True)
-criteria_names_directory = ["Relative position and orientation between neighboring buildings", "Position and orientation of buildings in relation to closest roads", "Building types in relation to underlying terrain type", 
-                            "Integrity of edges", "Straightness of edges", "Size relative to type", "Conservation of color codin"]
 for criterion_name in criteria_names:
     # Retrieve the confusion matrix for the current criterion
     confusion_matrix = aggregate_results[criterion_name]["confusion_matrix"]
@@ -140,7 +140,7 @@ for criterion_name in criteria_names:
         plt.close()
     else:
         # Save the plot with the criterion name as the filename
-        filename = os.path.join(output_folder, f"{criterion_name}_confusion_matrix_Eric.png")
+        filename = os.path.join(output_folder, f"{criterion_name}_testtest.png")
         plt.savefig(filename)
         plt.close()
 

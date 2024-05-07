@@ -5,6 +5,6 @@ shuffled_dataset
 upsampled
 shuffled_dataset_testing
 image_2.jpg
-labels_new_test_nojoining.csv
-labels_new_test.csv
-labels.csv
+*.csv
+*.jpg
+*.pth

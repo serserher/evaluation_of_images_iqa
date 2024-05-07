@@ -12,7 +12,7 @@ import csv
 path_to_images = '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400'
 criteria_labels = 'shuffled_dataset/labels_301to400.csv'
 
-output_path = 'upsampled/experiment1'
+output_path = 'upsampled/PositioningRoads4'
 # Create the output directory if it doesn't exist
 if not os.path.exists(output_path):
     os.makedirs(output_path)
@@ -34,11 +34,11 @@ for filename in os.listdir(path_to_images):
     indexes_mappped.sort()
 
 #For simplicity, here we can just initialize count as the last element from the previous dataset that we are about to continue with more upsampling    
-count = copy.deepcopy(indexes_mappped[-1]) + 1
-
-criterion_to_upsample = "Integrity of edges"
+#count = copy.deepcopy(indexes_mappped[-1]) + 1
+count = 1115 + 1
+criterion_to_upsample = "Position and orientation of buildings in relation to closest road/s"
 value_to_upsample = 0
-upsample_this_times = 2
+upsample_this_times = 5
 images_to_upsample = []
 for header in headers:
     if criterion_to_upsample in header:
@@ -65,7 +65,7 @@ for image_index in images_to_upsample:
         count += 1
                     
 #print(new_headers, new_criteriavalues, count)
-filename_labels = 'upsampled/experiment1/upsampled_labels.csv'
+filename_labels = 'upsampled/PositioningRoads4/upsampled_labels.csv'
 # Open the file in write mode
 
 
