@@ -17,6 +17,7 @@ import copy
 import seaborn as sns
 import matplotlib.pyplot as plt
 from torch.optim.lr_scheduler import LambdaLR
+from torch.nn import Sequential
 
 #PARAMETER INITIALIZATION
 batch_size = 15
@@ -80,11 +81,24 @@ print(f'\n\nThe length of the dataset is: {len(dataset)}')
 print(f'---------------------------------------------------')
 
 #DECLARE THE MODEL
-base_model = mobilenet_v2(pretrained=True)
+base_model = resnet18(pretrained=True)
 for param in base_model.parameters():
 	param.requires_grad = False
 print(base_model)
-perf_evaluator_model = PerformancePredictor(base_model, 0.5)
+# Truncate the backbone model after the desired layer (layer4)
+backbone_model = Sequential(
+    base_model.conv1,
+    base_model.bn1,
+    base_model.relu,
+    base_model.maxpool,
+    base_model.layer1,
+    base_model.layer2,
+    base_model.layer3,
+    base_model.layer4,
+    )
+
+print(backbone_model)
+perf_evaluator_model = PerformancePredictor(backbone_model, 0.5)
 perf_evaluator_model = perf_evaluator_model.to(DEVICE)
 
 
@@ -117,11 +131,25 @@ for fold, (train_ids, val_ids) in enumerate (kfold.split(dataset)):
     val_loader = torch.utils.data.DataLoader(
                       dataset,
                       batch_size=batch_size, sampler=val_subsampler)
-    
+    """
     perf_evaluator_model.criteria1.apply(weights_init)
     perf_evaluator_model.criteria2.apply(weights_init)
     perf_evaluator_model.criteria4.apply(weights_init)
     perf_evaluator_model.criteria5.apply(weights_init)
+    
+    """
+    perf_evaluator_model.criteria1_conv.apply(weights_init)
+    perf_evaluator_model.criteria1_lin.apply(weights_init)
+
+    perf_evaluator_model.criteria2_conv.apply(weights_init)
+    perf_evaluator_model.criteria2_lin.apply(weights_init)
+    
+    perf_evaluator_model.criteria4_conv.apply(weights_init)
+    perf_evaluator_model.criteria4_lin.apply(weights_init)
+    
+    perf_evaluator_model.criteria5_conv.apply(weights_init)
+    perf_evaluator_model.criteria5_lin.apply(weights_init)
+    
 
     
     #DECLARE THE OPTIMIZER
@@ -290,7 +318,7 @@ perf_evaluator_model.criteria4 = best_model_criteria4.criteria4
 perf_evaluator_model.criteria5 = best_model_criteria5.criteria5            
   
 # Define the directory where you want to save the model
-output_dir = "output model Resnet 50"
+output_dir = "output model Resnet 18, added conv layers to the output heads"
 
 # Create the directory if it doesn't exist
 if not os.path.exists(output_dir):
@@ -302,7 +330,7 @@ model_path = os.path.join(output_dir, "performance_evaluator_LR1e4_Dropout5_More
 torch.save(perf_evaluator_model, model_path)
 
 #output folder for plots initialization
-save_folder = "output plots/training_ResNet50_LR1e4_More_Complex_Classifying_Heads"
+save_folder = "output plots/training_ResNet18_LR1e4_Conv_Layers_Classifying_Heads"
 if not os.path.exists(save_folder):
     os.makedirs(save_folder)
     
