@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 class CustomTrainer:
-    def __init__(self, train_loader, val_loader, class_weights, device="cuda"):
+    def __init__(self, train_loader, val_loader, class_weights = None, device="cuda"):
         self.train_loader = train_loader
         self.val_loader = val_loader
         self.class_weights = class_weights
@@ -34,8 +34,10 @@ class CustomTrainer:
         perf_evaluator_model = perf_evaluator_model.to(self.device)
 
         optimizer = Adam(perf_evaluator_model.parameters(), lr=INIT_LR, weight_decay=1e-5) 
-
-        loss_function = CrossEntropyLoss(weight=torch.tensor(self.class_weights[criterion], device=self.device))
+        if self.class_weights is None:
+            loss_function = CrossEntropyLoss()
+        else:
+            loss_function = CrossEntropyLoss(weight=torch.tensor(self.class_weights[criterion], device=self.device))
 
         total_loss = []
         accuracy_during_training = []

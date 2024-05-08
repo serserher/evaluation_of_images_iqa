@@ -60,8 +60,13 @@ upsample_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/Posi
 upsample_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads2', 'upsampled/PositioningRoads2/upsampled_labels.csv', transforms = transforms_regular)
 upsample_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads3', 'upsampled/PositioningRoads3/upsampled_labels.csv', transforms = transforms_regular)
 upsample_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads4', 'upsampled/PositioningRoads4/upsampled_labels.csv', transforms = transforms_regular)
+dataset_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/First25', 'shuffled_dataset_testing/labels_First25.csv')
+dataset_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/26to50', 'shuffled_dataset_testing/labels_26to50.csv')
+dataset_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/51to75', 'shuffled_dataset_testing/labels_51to75.csv')
+dataset_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/76to100', 'shuffled_dataset_testing/labels_76to100.csv')
 
 dataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4, upsample_1, upsample_2, upsample_3, upsample_4, upsample_5, upsample_6, upsample_7, upsample_8])
+
 
 print(f'---------------------------------------------------')
 print(f'\n\nThe length of the dataset is: {len(dataset)}')
@@ -132,7 +137,7 @@ for criterion, weights in class_weights.items():
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-4, batch_size = 25, num_epochs=15)
+pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-4, batch_size = 25, num_epochs=50)
 pipeline.train()
 pipeline.save_models("ResNet18_Conv_MH_1e_4")
 pipeline.plot_metrics("ResNet18_Conv_MH_1e_4_Training_Metrics")
@@ -167,7 +172,7 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-3, batch_size = 25, num_epochs=15)
+pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-3, batch_size = 25, num_epochs=50)
 pipeline.train()
 pipeline.save_models("ResNet18_Conv_MH_1e_3")
 pipeline.plot_metrics("ResNet18_Conv_MH_1e_3_Training_Metrics")
@@ -202,7 +207,7 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-2, batch_size = 25, num_epochs=15)
+pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-2, batch_size = 25, num_epochs=50)
 pipeline.train()
 pipeline.save_models("ResNet18_Conv_MH_1e_2")
 pipeline.plot_metrics("ResNet18_Conv_MH_1e_2_Training_Metrics")
@@ -237,7 +242,7 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-4, batch_size = 25, num_epochs=10, class_weights = class_weights)
+pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-4, batch_size = 25, num_epochs=50, class_weights = class_weights)
 pipeline.train()
 pipeline.save_models("ResNet18_Conv_MH_1e_4_WC")
 pipeline.plot_metrics("ResNet18_Conv_MH_1e_4_WC_Training_Metrics")
@@ -272,7 +277,7 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-3, batch_size = 25, num_epochs=10, class_weights = class_weights)
+pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-3, batch_size = 25, num_epochs=50, class_weights = class_weights)
 pipeline.train()
 pipeline.save_models("ResNet18_Conv_MH_1e_3_WC")
 pipeline.plot_metrics("ResNet18_Conv_MH_1e_3_WC_Training_Metrics")
@@ -307,7 +312,7 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-2, batch_size = 25, num_epochs=10, class_weights = class_weights)
+pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-2, batch_size = 25, num_epochs=50, class_weights = class_weights)
 pipeline.train()
 pipeline.save_models("ResNet18_Conv_MH_1e_2_WC")
 pipeline.plot_metrics("ResNet18_Conv_MH_1e_2_WC_Training_Metrics")

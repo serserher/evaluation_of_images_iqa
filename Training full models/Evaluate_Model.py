@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-def evaluate_model(test_loader, model_paths):
+def evaluate_model(test_loader, model_paths, output_folder):
     criteria_names = ["Relative position and orientation between neighboring buildings", 
                       "Position and orientation of buildings in relation to closest road/s", 
                       "Integrity of edges", "Straightness of edges"]
@@ -67,32 +67,38 @@ def evaluate_model(test_loader, model_paths):
             "recall": np.sum(recalls_dict[criterion]) / num_batches,
             "accuracy": np.sum(accuracies_dict[criterion]) / num_batches
         }
-
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
     # Print the aggregated results
-    for criterion, results in aggregate_results.items():
-        print("Criterion:", criterion)
-        print("Total Confusion Matrix:")
-        print(results["confusion_matrix"])
-        print("Total F1 Score:", results["f1_score"])
-        print("Total Precision:", results["precision"])
-        print("Total Recall:", results["recall"])
-        print("Total Accuracy:", results["accuracy"])
+# Define the path for the text file
+    output_file = os.path.join(output_folder, "metrics_summary.txt")
 
-    # Calculate overall average F1 score, precision, recall, and accuracy
-    overall_f1_score = np.mean([np.mean(f1_scores_dict[criterion]) for criterion in criteria_names])
-    overall_precision = np.mean([np.mean(precisions_dict[criterion]) for criterion in criteria_names])
-    overall_recall = np.mean([np.mean(recalls_dict[criterion]) for criterion in criteria_names])
-    overall_accuracy = np.mean([np.mean(accuracies_dict[criterion]) for criterion in criteria_names])
+    # Open the text file in write mode
+    with open(output_file, "w") as f:
+        # Print the aggregated results to the text file
+        for criterion, results in aggregate_results.items():
+            f.write("Criterion: {}\n".format(criterion))
+            f.write("Total Confusion Matrix:\n")
+            f.write("{}\n".format(results["confusion_matrix"]))
+            f.write("Total F1 Score: {}\n".format(results["f1_score"]))
+            f.write("Total Precision: {}\n".format(results["precision"]))
+            f.write("Total Recall: {}\n".format(results["recall"]))
+            f.write("Total Accuracy: {}\n\n".format(results["accuracy"]))
 
-    print("Overall Average F1 Score:", overall_f1_score)
-    print("Overall Average Precision:", overall_precision)
-    print("Overall Average Recall:", overall_recall)
-    print("Overall Average Accuracy:", overall_accuracy)
+        # Calculate overall average F1 score, precision, recall, and accuracy
+        overall_f1_score = np.mean([np.mean(f1_scores_dict[criterion]) for criterion in criteria_names])
+        overall_precision = np.mean([np.mean(precisions_dict[criterion]) for criterion in criteria_names])
+        overall_recall = np.mean([np.mean(recalls_dict[criterion]) for criterion in criteria_names])
+        overall_accuracy = np.mean([np.mean(accuracies_dict[criterion]) for criterion in criteria_names])
+
+        # Print the overall averages to the text file
+        f.write("Overall Average F1 Score: {}\n".format(overall_f1_score))
+        f.write("Overall Average Precision: {}\n".format(overall_precision))
+        f.write("Overall Average Recall: {}\n".format(overall_recall))
+        f.write("Overall Average Accuracy: {}\n".format(overall_accuracy))
 
     # Plot and save confusion matrices
-    experiment_id = "1_ResNet18_for_each_criterion"  # Replace this with your unique identifier
-    output_folder = os.path.join("output_plots", experiment_id)
-    os.makedirs(output_folder, exist_ok=True)
+    
     for criterion_name in criteria_names:
         # Retrieve the confusion matrix for the current criterion
         confusion_matrix = aggregate_results[criterion_name]["confusion_matrix"]
