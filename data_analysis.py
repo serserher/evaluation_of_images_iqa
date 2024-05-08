@@ -20,10 +20,16 @@ upsample_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/Posi
 upsample_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads2', 'upsampled/PositioningRoads2/upsampled_labels.csv')
 upsample_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads3', 'upsampled/PositioningRoads3/upsampled_labels.csv')
 upsample_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads4', 'upsampled/PositioningRoads4/upsampled_labels.csv')
+dataset_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/First25', 'shuffled_dataset_testing/labels_First25.csv')
+dataset_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/26to50', 'shuffled_dataset_testing/labels_26to50.csv')
+dataset_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/51to75', 'shuffled_dataset_testing/labels_51to75.csv')
+dataset_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/76to100', 'shuffled_dataset_testing/labels_76to100.csv')
 
 
-#dataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4, upsample_1, upsample_2, upsample_3, upsample_4, upsample_5, upsample_6, upsample_7, upsample_8])
-dataset = dataset_3
+#dataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4, upsample_1, upsample_2, upsample_3, upsample_4, upsample_5, upsample_6, upsample_7, upsample_8, dataset_5, dataset_6, dataset_7,dataset_8])
+dataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4, upsample_1, upsample_2, upsample_3, upsample_4, upsample_5, upsample_6, upsample_7, upsample_8])
+
+#dataset = dataset_3
 labels_list = []
 #print(len(dataset))
 for i in tqdm(range(len(dataset))):
@@ -51,7 +57,7 @@ for i in tqdm(range(len(dataset))):
     labels_list.append(aux_list.copy())
 #headers = ["Relative position and orientation between neighboring buildings", "Position and orientation of buildings in relation to closest road/s", "Building types in relation to underlying terrain type",
            #"Integrity of edges", "Straightness of edges", "Size relative to type", "Conservation of color codin", "Average rating of the image"]
-headers = ["c1", "c2","c4","c5","avg"]
+headers = ["c1", "c2","c3","c4","avg"]
 
 ratings_dataframe = pd.DataFrame(labels_list, columns = headers)
 print(ratings_dataframe)
@@ -64,7 +70,7 @@ print(correlation_matrix)
 plt.figure(figsize=(10, 8))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
 plt.title('Correlation Matrix')
-plt.savefig('./output plots/correlation_matrix_dataset_eval_Average_Less_Criteria.png')
+plt.savefig('./output plots/correlation_matrix_ALL_DATA.png')
 
 
 # Calculate the average rating for each criterion
