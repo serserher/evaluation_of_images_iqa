@@ -39,14 +39,18 @@ class CustomTrainer:
         else:
             loss_function = CrossEntropyLoss(weight=torch.tensor(self.class_weights[criterion], device=self.device))
 
-        total_loss = []
+        total_loss_epoch = []
         accuracy_during_training = []
         
-        val_total_loss = []
+        val_total_loss_epoch = []
         val_accuracy_during_training = []
         best_loss = math.inf
 
         for e in tqdm(range(NUM_EPOCHS)):
+            val_total_loss = []
+            total_loss = []
+            avg_loss_train = 0
+            avg_loss_val = 0
             perf_evaluator_model.train()
             train_correct = 0
             total_train = 0
@@ -73,7 +77,9 @@ class CustomTrainer:
                 # Track correct predictions and total samples for training accuracy calculation
                 train_correct += ((predictions > 0.5).float() == criteria[criterion].float().to(self.device)).all(dim=1).sum().item()
                 total_train += criteria[criterion].size(0)       
-
+            for i in range(len(total_loss)):
+                avg_loss_train += total_loss[i]
+            total_loss_epoch.append(avg_loss_train/len(total_loss))
             # Calculate training accuracy
             training_acc = train_correct / total_train
             accuracy_during_training.append(training_acc)
@@ -100,17 +106,20 @@ class CustomTrainer:
                 torch.save(perf_evaluator_model, output_path)
             val_acc = val_correct / total_val
             val_accuracy_during_training.append(val_acc)
+            for i in range(len(val_total_loss)):
+                avg_loss_val += val_total_loss[i]
+                val_total_loss_epoch.append(avg_loss_val/len(val_total_loss))
             print(f"the validation accuracy in the last iteration of epoch {e}: {val_acc}")
             if e > 20:
-                if (int(val_total_loss[-1] > 0.9999*val_total_loss[-2]) + int(val_total_loss[-2] > 0.9999*val_total_loss[-3]) + int(val_total_loss[-3] > 0.9999*val_total_loss[-4]) + int(val_total_loss[-4] > 0.9999*val_total_loss[-5]) + int(val_total_loss[-5] > 0.9999*val_total_loss[-6]) + int(val_total_loss[-6] > 0.9999*val_total_loss[-7])) > 3:
+                if (int(val_total_loss_epoch[-1] > 0.999*val_total_loss_epoch[-2]) + int(val_total_loss_epoch[-2] > 0.999*val_total_loss_epoch[-3]) + int(val_total_loss_epoch[-3] > 0.999*val_total_loss_epoch[-4]) + int(val_total_loss_epoch[-4] > 0.999*val_total_loss_epoch[-5]) + int(val_total_loss_epoch[-5] > 0.999*val_total_loss_epoch[-6]) + int(val_total_loss_epoch[-6] > 0.999*val_total_loss_epoch[-7])) > 3:
                     break
         # Save figures for total loss and validation total loss
         if not os.path.exists(figures_path):
             os.makedirs(figures_path)
         plt.figure(figsize=(10, 5))
-        total_loss_tensor = torch.tensor(total_loss)  # Convert list to tensor
-        plt.plot(total_loss_tensor.cpu().numpy(), label='Total Loss')
-        val_total_loss_tensor = torch.tensor(val_total_loss)  # Convert list to tensor
+        total_loss_tensor = torch.tensor(total_loss_epoch)  # Convert list to tensor
+        plt.plot(total_loss_tensor.cpu().numpy(), label='Total Training Loss')
+        val_total_loss_tensor = torch.tensor(val_total_loss_epoch)  # Convert list to tensor
         plt.plot(val_total_loss_tensor.cpu().numpy(), label='Validation Total Loss')
         plt.xlabel('Iterations')
         plt.ylabel('Loss')
