@@ -8,26 +8,35 @@ import matplotlib.pyplot as plt
 from torch.utils.data import ConcatDataset
 from tqdm import tqdm
 
-dataset_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/First100', 'shuffled_dataset/labels_First100.csv')
-dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/101to200', 'shuffled_dataset/labels_101to200.csv')
-dataset_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/201to300', 'shuffled_dataset/labels_201to300.csv')
-dataset_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400', 'shuffled_dataset/labels_301to400.csv')
-upsample_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningBuildings', 'upsampled/PositioningBuildings/upsampled_labels.csv')
-upsample_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningBuildings1', 'upsampled/PositioningBuildings1/upsampled_labels.csv')
-upsample_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningBuildings2', 'upsampled/PositioningBuildings2/upsampled_labels.csv')
-upsample_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningBuildings3', 'upsampled/PositioningBuildings3/upsampled_labels.csv')
-upsample_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads', 'upsampled/PositioningRoads/upsampled_labels.csv')
-upsample_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads2', 'upsampled/PositioningRoads2/upsampled_labels.csv')
-upsample_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads3', 'upsampled/PositioningRoads3/upsampled_labels.csv')
-upsample_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads4', 'upsampled/PositioningRoads4/upsampled_labels.csv')
-dataset_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/First25', 'shuffled_dataset_testing/labels_First25.csv')
-dataset_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/26to50', 'shuffled_dataset_testing/labels_26to50.csv')
-dataset_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/51to75', 'shuffled_dataset_testing/labels_51to75.csv')
-dataset_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/76to100', 'shuffled_dataset_testing/labels_76to100.csv')
+dataset_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/First75', 'New_Dataset/First75/labels_First75.csv')
+dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/101to175', 'New_Dataset/101to175/labels_101to175.csv')
+dataset_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/201to274', 'New_Dataset/201to274/labels_201to275.csv')
+dataset_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/301to375', 'New_Dataset/301to375/labels_301to375.csv')
+upsample_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings1', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings1/upsampled_labels.csv')
+upsample_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings2', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings2/upsampled_labels.csv')
+upsample_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings3', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings3/upsampled_labels.csv')
+upsample_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings4', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings4/upsampled_labels.csv')
+upsample_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads1', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads1/upsampled_labels.csv')
+upsample_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads2', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads2/upsampled_labels.csv')
+upsample_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads3', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads3/upsampled_labels.csv')
+upsample_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads4', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads4/upsampled_labels.csv')
+upsample_9 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/StraightnessEdges1', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/StraightnessEdges1/upsampled_labels.csv')
+upsample_10 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/StraightnessEdges2', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/StraightnessEdges2/upsampled_labels.csv')
 
 
-#dataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4, upsample_1, upsample_2, upsample_3, upsample_4, upsample_5, upsample_6, upsample_7, upsample_8, dataset_5, dataset_6, dataset_7,dataset_8])
-dataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4, upsample_1, upsample_2, upsample_3, upsample_4, upsample_5, upsample_6, upsample_7, upsample_8])
+#dataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4, upsample_1, upsample_2, upsample_3, upsample_4, upsample_5, upsample_6, upsample_7, upsample_8, upsample_9, upsample_10])
+
+dataset_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/76to100', 'New_Dataset/76to100/labels_76to100.csv')
+dataset_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/176to200', 'New_Dataset/176to200/labels_176to200.csv')
+dataset_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/275to300', 'New_Dataset/275to300/labels_275to300.csv')
+dataset_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/376to400', 'New_Dataset/376to400/labels_376to400.csv')
+dataset_9 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/First25', '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/labels_First25.csv')
+dataset_10 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/26to50', '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/labels_26to50.csv')
+dataset_11 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/51to75', '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/labels_51to75.csv')
+dataset_12 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/76to100', '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/labels_76to100.csv')
+
+dataset = ConcatDataset([dataset_5, dataset_6, dataset_7,dataset_8, dataset_9, dataset_10, dataset_11,dataset_12])
+
 
 #dataset = dataset_3
 labels_list = []
@@ -70,7 +79,7 @@ print(correlation_matrix)
 plt.figure(figsize=(10, 8))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
 plt.title('Correlation Matrix')
-plt.savefig('./output plots/correlation_matrix_ALL_DATA.png')
+plt.savefig('./output_plots/correlation_matrix_test_NewLessdata_upsampled.png')
 
 
 # Calculate the average rating for each criterion

@@ -7,6 +7,9 @@ shuffled_dataset
 upsampled
 shuffled_dataset_testing
 image_2.jpg
+old_results
+TRAININGS_Old_Dataset_No_Upsampling
 *.csv
 *.jpg
 *.pth
+*.png

@@ -9,10 +9,17 @@ import copy
 from skimage import io
 import csv
 
-path_to_images = '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400'
-criteria_labels = 'shuffled_dataset/labels_301to400.csv'
+"""
+dataset_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/First75', 'New_Dataset/First75/labels_First75.csv')
+dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/101to175', 'New_Dataset/101to175/labels_101to175.csv')
+dataset_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/201to274', 'New_Dataset/201to274/labels_201to275.csv')
+dataset_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/301to375', 'New_Dataset/301to375/labels_301to375.csv')
+"""
 
-output_path = 'upsampled/PositioningRoads4'
+path_to_images = '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/101to175'
+criteria_labels = 'New_Dataset/101to175/labels_101to175.csv'
+
+output_path = 'New_Dataset/upsampled/StraightnessEdges2'
 # Create the output directory if it doesn't exist
 if not os.path.exists(output_path):
     os.makedirs(output_path)
@@ -35,10 +42,10 @@ for filename in os.listdir(path_to_images):
 
 #For simplicity, here we can just initialize count as the last element from the previous dataset that we are about to continue with more upsampling    
 #count = copy.deepcopy(indexes_mappped[-1]) + 1
-count = 1115 + 1
-criterion_to_upsample = "Position and orientation of buildings in relation to closest road/s"
+count = 827 + 1
+criterion_to_upsample = "Straightness of edges"
 value_to_upsample = 0
-upsample_this_times = 5
+upsample_this_times = 4
 images_to_upsample = []
 for header in headers:
     if criterion_to_upsample in header:
@@ -65,7 +72,7 @@ for image_index in images_to_upsample:
         count += 1
                     
 #print(new_headers, new_criteriavalues, count)
-filename_labels = 'upsampled/PositioningRoads4/upsampled_labels.csv'
+filename_labels = 'New_Dataset/upsampled/StraightnessEdges2/upsampled_labels.csv'
 # Open the file in write mode
 
 

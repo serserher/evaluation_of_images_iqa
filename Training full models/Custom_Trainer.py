@@ -101,25 +101,30 @@ class CustomTrainer:
             val_acc = val_correct / total_val
             val_accuracy_during_training.append(val_acc)
             print(f"the validation accuracy in the last iteration of epoch {e}: {val_acc}")
+            if e > 20:
+                if (int(val_total_loss[-1] > 0.9999*val_total_loss[-2]) + int(val_total_loss[-2] > 0.9999*val_total_loss[-3]) + int(val_total_loss[-3] > 0.9999*val_total_loss[-4]) + int(val_total_loss[-4] > 0.9999*val_total_loss[-5]) + int(val_total_loss[-5] > 0.9999*val_total_loss[-6]) + int(val_total_loss[-6] > 0.9999*val_total_loss[-7])) > 3:
+                    break
         # Save figures for total loss and validation total loss
         if not os.path.exists(figures_path):
             os.makedirs(figures_path)
         plt.figure(figsize=(10, 5))
         total_loss_tensor = torch.tensor(total_loss)  # Convert list to tensor
         plt.plot(total_loss_tensor.cpu().numpy(), label='Total Loss')
-        plt.xlabel('Iterations')
-        plt.ylabel('Loss')
-        plt.title('Total Loss During Training')
-        plt.legend()
-        plt.savefig(os.path.join(figures_path, 'total_loss.png'))
-        plt.close()
-
-        plt.figure(figsize=(10, 5))
         val_total_loss_tensor = torch.tensor(val_total_loss)  # Convert list to tensor
         plt.plot(val_total_loss_tensor.cpu().numpy(), label='Validation Total Loss')
         plt.xlabel('Iterations')
         plt.ylabel('Loss')
-        plt.title('Validation Total Loss During Training')
+        plt.title(f'Loss comparison {output_name}')
         plt.legend()
-        plt.savefig(os.path.join(figures_path, 'val_total_loss.png'))
+        plt.savefig(os.path.join(figures_path, f'{output_name}_loss_comparison.png'))
+        plt.close()
+
+        plt.figure(figsize=(10, 5))
+        plt.plot(accuracy_during_training, label='Training accuracy')
+        plt.plot(val_accuracy_during_training, label='Validation accuracy')
+        plt.xlabel('Iterations')
+        plt.ylabel('Accuracy')
+        plt.title(f'Accuracy comparison {output_name}')
+        plt.legend()
+        plt.savefig(os.path.join(figures_path, f'{output_name}_accuracies_evolution.png'))
         plt.close()

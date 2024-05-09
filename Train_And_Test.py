@@ -48,36 +48,47 @@ augmentation_transforms = transforms.Compose([
     transforms.Normalize(mean=MEAN, std=STD)
 ])
 
-dataset_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/First100', 'shuffled_dataset/labels_First100.csv', transforms = transforms_regular)
-dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/101to200', 'shuffled_dataset/labels_101to200.csv', transforms = transforms_regular)
-dataset_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/201to300', 'shuffled_dataset/labels_201to300.csv', transforms = transforms_regular)
-dataset_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset/301to400', 'shuffled_dataset/labels_301to400.csv', transforms = transforms_regular)
-upsample_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningBuildings', 'upsampled/PositioningBuildings/upsampled_labels.csv', transforms = transforms_regular)
-upsample_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningBuildings1', 'upsampled/PositioningBuildings1/upsampled_labels.csv', transforms = transforms_regular)
-upsample_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningBuildings2', 'upsampled/PositioningBuildings2/upsampled_labels.csv', transforms = transforms_regular)
-upsample_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningBuildings3', 'upsampled/PositioningBuildings3/upsampled_labels.csv', transforms = transforms_regular)
-upsample_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads', 'upsampled/PositioningRoads/upsampled_labels.csv', transforms = transforms_regular)
-upsample_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads2', 'upsampled/PositioningRoads2/upsampled_labels.csv', transforms = transforms_regular)
-upsample_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads3', 'upsampled/PositioningRoads3/upsampled_labels.csv', transforms = transforms_regular)
-upsample_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/upsampled/PositioningRoads4', 'upsampled/PositioningRoads4/upsampled_labels.csv', transforms = transforms_regular)
-dataset_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/First25', 'shuffled_dataset_testing/labels_First25.csv')
-dataset_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/26to50', 'shuffled_dataset_testing/labels_26to50.csv')
-dataset_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/51to75', 'shuffled_dataset_testing/labels_51to75.csv')
-dataset_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/76to100', 'shuffled_dataset_testing/labels_76to100.csv')
+dataset_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/First75', 'New_Dataset/First75/labels_First75.csv', transforms = transforms_regular)
+dataset_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/101to175', 'New_Dataset/101to175/labels_101to175.csv', transforms = transforms_regular)
+dataset_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/201to274', 'New_Dataset/201to274/labels_201to275.csv', transforms = transforms_regular)
+dataset_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/301to375', 'New_Dataset/301to375/labels_301to375.csv', transforms = transforms_regular)
+upsample_1 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings1', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings1/upsampled_labels.csv', transforms = transforms_regular)
+upsample_2 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings2', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings2/upsampled_labels.csv', transforms = augmentation_transforms)
+upsample_3 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings3', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings3/upsampled_labels.csv', transforms = augmentation_transforms)
+upsample_4 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings4', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Buildings4/upsampled_labels.csv', transforms = transforms_regular)
+upsample_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads1', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads1/upsampled_labels.csv', transforms = augmentation_transforms)
+upsample_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads2', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads2/upsampled_labels.csv', transforms = transforms_regular)
+upsample_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads3', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads3/upsampled_labels.csv', transforms = augmentation_transforms)
+upsample_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads4', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/Roads4/upsampled_labels.csv', transforms = transforms_regular)
+upsample_9 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/StraightnessEdges1', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/StraightnessEdges1/upsampled_labels.csv', transforms = transforms_regular)
+upsample_10 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/StraightnessEdges2', '/home/sergio/Thesis_Sergio/evaluation/New_Dataset/upsampled/StraightnessEdges2/upsampled_labels.csv', transforms = augmentation_transforms)
 
-dataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4, upsample_1, upsample_2, upsample_3, upsample_4, upsample_5, upsample_6, upsample_7, upsample_8])
+train_dataset = ConcatDataset([dataset_1, dataset_2, dataset_3, dataset_4, upsample_1, upsample_2, upsample_3, upsample_4, upsample_5, upsample_6, upsample_7, upsample_8, upsample_9, upsample_10])
 
 
-print(f'---------------------------------------------------')
-print(f'\n\nThe length of the dataset is: {len(dataset)}')
-print(f'---------------------------------------------------')
+dataset_5 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/76to100', 'New_Dataset/76to100/labels_76to100.csv', transforms = transforms_regular)
+dataset_6 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/176to200', 'New_Dataset/176to200/labels_176to200.csv', transforms = transforms_regular)
+dataset_7 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/275to300', 'New_Dataset/275to300/labels_275to300.csv', transforms = transforms_regular)
+dataset_8 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/New_Dataset/376to400', 'New_Dataset/376to400/labels_376to400.csv', transforms = transforms_regular)
+dataset_9 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/First25', '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/labels_First25.csv', transforms = transforms_regular)
+dataset_10 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/26to50', '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/labels_26to50.csv', transforms = transforms_regular)
+dataset_11 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/51to75', '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/labels_51to75.csv', transforms = transforms_regular)
+dataset_12 = ImageDataset ('/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/76to100', '/home/sergio/Thesis_Sergio/evaluation/shuffled_dataset_testing/labels_76to100.csv', transforms = transforms_regular)
 
+val_test_dataset = ConcatDataset([dataset_5, dataset_6, dataset_7,dataset_8, dataset_9, dataset_10, dataset_11,dataset_12])
 
-test_ratio = 0.2
-num_total = len(dataset)
+test_ratio = 0.4
+num_total = len(val_test_dataset)
 num_test = int(test_ratio * num_total)
-num_train = num_total - num_test
-train_dataset, test_dataset = random_split(dataset, [num_train, num_test])
+num_val = num_total - num_test
+val_dataset, test_dataset = random_split(val_test_dataset, [num_val, num_test])
+
+
+
+print(f'-----------------------------------------------------------')
+print(f'\n\nThe length of the training dataset is: {len(train_dataset)}')
+print(f'-----------------------------------------------------------')
+
 
 
 #----------------------------------------------------------------------------------------------------------#
@@ -88,7 +99,7 @@ train_dataset, test_dataset = random_split(dataset, [num_train, num_test])
 label_frequencies = defaultdict(lambda: defaultdict(int))
 
 # Iterate over the dataset to count the frequency of each label for each criterion
-for image, labels_dict in dataset:
+for image, labels_dict in train_dataset:
     for criterion, labels in labels_dict.items():
         for label, freq in enumerate(labels):
             label_frequencies[criterion][label] += freq.item()
@@ -102,7 +113,7 @@ for criterion, frequencies in label_frequencies.items():
     print()
     
 # Calculate the total number of samples in the dataset
-total_samples = len(dataset)
+total_samples = len(train_dataset)
 
 # Convert frequencies to tensors if they are not already tensors
 for criterion, frequencies in label_frequencies.items():
@@ -132,27 +143,27 @@ for criterion, weights in class_weights.items():
 #----------------------------------------------------------------------------------------------------------#
 
 
-
+"""
 #----------------------------------------------------------------------------------------------------------#
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-4, batch_size = 25, num_epochs=50)
+pipeline = TrainingPipeline(train_dataset, val_dataset, backbone_model, init_lr = 1e-4, batch_size = 25, num_epochs=100)
 pipeline.train()
-pipeline.save_models("ResNet18_Conv_MH_1e_4")
-pipeline.plot_metrics("ResNet18_Conv_MH_1e_4_Training_Metrics")
+pipeline.save_models("New_Dataset/models/ResNet18_Conv_MH_1e_4")
+pipeline.plot_metrics("New_Dataset/models/ResNet18_Conv_MH_1e_4_Training_Metrics")
 
 #----------------------------------------------------------------------------------------------------------#
 #----------------------------------------------TEST--------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-test_loader = DataLoader(test_dataset, batch_size=25, shuffle = True)
-perf_evaluator_model = torch.load('ResNet18_Conv_MH_1e_4/full_model.pth')
+perf_evaluator_model = torch.load('New_Dataset/models/ResNet18_Conv_MH_1e_4/full_model.pth')
+test_loader = DataLoader(test_dataset, batch_size=20, shuffle = True)
 
 test_pipeline = TestPipeline(test_loader, perf_evaluator_model)
 test_pipeline.evaluate()
 aggregate_results = test_pipeline.aggregate_results()
-output_folder = "output_plots/ResNet18_Conv_MH_1e_4"
+output_folder = "output_plots/New_Dataset/models/ResNet18_Conv_MH_1e_4"
 test_pipeline.plot_confusion_matrices(output_folder)
 test_pipeline.print_aggregated_results(output_folder)
 
@@ -172,22 +183,23 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-3, batch_size = 25, num_epochs=50)
+pipeline = TrainingPipeline(train_dataset, val_dataset, backbone_model, init_lr = 1e-3, batch_size = 25, num_epochs=100)
 pipeline.train()
-pipeline.save_models("ResNet18_Conv_MH_1e_3")
-pipeline.plot_metrics("ResNet18_Conv_MH_1e_3_Training_Metrics")
+pipeline.save_models("New_Dataset/models/ResNet18_Conv_MH_1e_3")
+pipeline.plot_metrics("New_Dataset/models/ResNet18_Conv_MH_1e_3_Training_Metrics")
 
 #----------------------------------------------------------------------------------------------------------#
 #----------------------------------------------TEST--------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-test_loader = DataLoader(test_dataset, batch_size=25, shuffle = True)
-perf_evaluator_model = torch.load('ResNet18_Conv_MH_1e_3/full_model.pth')
+
+perf_evaluator_model = torch.load('New_Dataset/models/ResNet18_Conv_MH_1e_3/full_model.pth')
+test_loader = DataLoader(test_dataset, batch_size=20, shuffle = True)
 
 test_pipeline = TestPipeline(test_loader, perf_evaluator_model)
 test_pipeline.evaluate()
 aggregate_results = test_pipeline.aggregate_results()
-output_folder = "output_plots/ResNet18_Conv_MH_1e_3"
+output_folder = "output_plots/New_Dataset/models/ResNet18_Conv_MH_1e_3"
 test_pipeline.plot_confusion_matrices(output_folder)
 test_pipeline.print_aggregated_results(output_folder)
 
@@ -202,27 +214,28 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------------------------------------------------------------------#
 
 
-
+"""
 #----------------------------------------------------------------------------------------------------------#
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-2, batch_size = 25, num_epochs=50)
+pipeline = TrainingPipeline(train_dataset, val_dataset, backbone_model, init_lr = 1e-2, batch_size = 25, num_epochs=100)
 pipeline.train()
-pipeline.save_models("ResNet18_Conv_MH_1e_2")
-pipeline.plot_metrics("ResNet18_Conv_MH_1e_2_Training_Metrics")
+pipeline.save_models("New_Dataset/models/ResNet18_Conv_MH_1e_2")
+pipeline.plot_metrics("New_Dataset/models/ResNet18_Conv_MH_1e_2_Training_Metrics")
+
 
 #----------------------------------------------------------------------------------------------------------#
 #----------------------------------------------TEST--------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-test_loader = DataLoader(test_dataset, batch_size=25, shuffle = True)
-perf_evaluator_model = torch.load('ResNet18_Conv_MH_1e_2/full_model.pth')
+perf_evaluator_model = torch.load('New_Dataset/models/ResNet18_Conv_MH_1e_2/full_model.pth')
+test_loader = DataLoader(test_dataset, batch_size=20, shuffle = True)
 
 test_pipeline = TestPipeline(test_loader, perf_evaluator_model)
 test_pipeline.evaluate()
 aggregate_results = test_pipeline.aggregate_results()
-output_folder = "output_plots/ResNet18_Conv_MH_1e_2"
+output_folder = "output_plots/New_Dataset/models/ResNet18_Conv_MH_1e_2"
 test_pipeline.plot_confusion_matrices(output_folder)
 test_pipeline.print_aggregated_results(output_folder)
 
@@ -242,22 +255,23 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-4, batch_size = 25, num_epochs=50, class_weights = class_weights)
+pipeline = TrainingPipeline(train_dataset, val_dataset, backbone_model, init_lr = 1e-4, batch_size = 25, num_epochs=100, class_weights = class_weights)
 pipeline.train()
-pipeline.save_models("ResNet18_Conv_MH_1e_4_WC")
-pipeline.plot_metrics("ResNet18_Conv_MH_1e_4_WC_Training_Metrics")
+pipeline.save_models("New_Dataset/models/ResNet18_Conv_MH_1e_4_WC")
+pipeline.plot_metrics("New_Dataset/models/ResNet18_Conv_MH_1e_4_WC_Training_Metrics")
+
 
 #----------------------------------------------------------------------------------------------------------#
 #----------------------------------------------TEST--------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-test_loader = DataLoader(test_dataset, batch_size=25, shuffle = True)
-perf_evaluator_model = torch.load('ResNet18_Conv_MH_1e_4_WC/full_model.pth')
+perf_evaluator_model = torch.load('New_Dataset/models/ResNet18_Conv_MH_1e_4_WC/full_model.pth')
+test_loader = DataLoader(test_dataset, batch_size=20, shuffle = True)
 
 test_pipeline = TestPipeline(test_loader, perf_evaluator_model)
 test_pipeline.evaluate()
 aggregate_results = test_pipeline.aggregate_results()
-output_folder = "output_plots/ResNet18_Conv_MH_1e_4_WC"
+output_folder = "output_plots/New_Dataset/models/ResNet18_Conv_MH_1e_4_WC"
 test_pipeline.plot_confusion_matrices(output_folder)
 test_pipeline.print_aggregated_results(output_folder)
 
@@ -277,22 +291,23 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-3, batch_size = 25, num_epochs=50, class_weights = class_weights)
+pipeline = TrainingPipeline(train_dataset, val_dataset, backbone_model, init_lr = 1e-3, batch_size = 25, num_epochs=100, class_weights = class_weights)
 pipeline.train()
-pipeline.save_models("ResNet18_Conv_MH_1e_3_WC")
-pipeline.plot_metrics("ResNet18_Conv_MH_1e_3_WC_Training_Metrics")
+pipeline.save_models("New_Dataset/models/ResNet18_Conv_MH_1e_3_WC")
+pipeline.plot_metrics("New_Dataset/models/ResNet18_Conv_MH_1e_3_WC_Training_Metrics")
+
 
 #----------------------------------------------------------------------------------------------------------#
 #----------------------------------------------TEST--------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-test_loader = DataLoader(test_dataset, batch_size=25, shuffle = True)
-perf_evaluator_model = torch.load('ResNet18_Conv_MH_1e_3_WC/full_model.pth')
+perf_evaluator_model = torch.load('New_Dataset/models/ResNet18_Conv_MH_1e_3/full_model.pth')
+test_loader = DataLoader(test_dataset, batch_size=20, shuffle = True)
 
 test_pipeline = TestPipeline(test_loader, perf_evaluator_model)
 test_pipeline.evaluate()
 aggregate_results = test_pipeline.aggregate_results()
-output_folder = "output_plots/ResNet18_Conv_MH_1e_3_WC"
+output_folder = "output_plots/New_Dataset/models/ResNet18_Conv_MH_1e_3_WC"
 test_pipeline.plot_confusion_matrices(output_folder)
 test_pipeline.print_aggregated_results(output_folder)
 
@@ -312,21 +327,22 @@ test_pipeline.print_aggregated_results(output_folder)
 #----------------------------------------------Train-------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-pipeline = TrainingPipeline(train_dataset, backbone_model, init_lr = 1e-2, batch_size = 25, num_epochs=50, class_weights = class_weights)
+pipeline = TrainingPipeline(train_dataset, val_dataset, backbone_model, init_lr = 1e-2, batch_size = 25, num_epochs=100, class_weights = class_weights)
 pipeline.train()
-pipeline.save_models("ResNet18_Conv_MH_1e_2_WC")
-pipeline.plot_metrics("ResNet18_Conv_MH_1e_2_WC_Training_Metrics")
+pipeline.save_models("New_Dataset/models/ResNet18_Conv_MH_1e_2_WC")
+pipeline.plot_metrics("New_Dataset/models/ResNet18_Conv_MH_1e_2_WC_Training_Metrics")
+
 
 #----------------------------------------------------------------------------------------------------------#
 #----------------------------------------------TEST--------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------#
 
-test_loader = DataLoader(test_dataset, batch_size=25, shuffle = True)
-perf_evaluator_model = torch.load('ResNet18_Conv_MH_1e_2_WC/full_model.pth')
+perf_evaluator_model = torch.load('New_Dataset/models/ResNet18_Conv_MH_1e_2_WC/full_model.pth')
+test_loader = DataLoader(test_dataset, batch_size=20, shuffle = True)
 
 test_pipeline = TestPipeline(test_loader, perf_evaluator_model)
 test_pipeline.evaluate()
 aggregate_results = test_pipeline.aggregate_results()
-output_folder = "output_plots/ResNet18_Conv_MH_1e_2_WC"
+output_folder = "output_plots/New_Dataset/models/ResNet18_Conv_MH_1e_2_WC"
 test_pipeline.plot_confusion_matrices(output_folder)
 test_pipeline.print_aggregated_results(output_folder)

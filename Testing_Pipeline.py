@@ -46,7 +46,7 @@ class TestPipeline:
                     single_label_true = np.argmax(true_labels, axis=1)
 
                     true_labels = np.nan_to_num(true_labels, nan=0)
-                    self.confusion_matrices_dict[criterion_name].append(confusion_matrix(single_label_true, single_label_pred))
+                    self.confusion_matrices_dict[criterion_name].append(confusion_matrix(single_label_true, single_label_pred, labels=np.unique(single_label_true)))
                     self.f1_scores_dict[criterion_name].append(f1_score(true_labels, pred_labels, average='macro'))
                     self.precisions_dict[criterion_name].append(precision_score(true_labels, pred_labels, average='macro'))
                     self.recalls_dict[criterion_name].append(recall_score(true_labels, pred_labels, average='macro'))
