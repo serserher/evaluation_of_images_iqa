@@ -108,7 +108,7 @@ class CustomTrainer:
             val_accuracy_during_training.append(val_acc)
             for i in range(len(val_total_loss)):
                 avg_loss_val += val_total_loss[i]
-                val_total_loss_epoch.append(avg_loss_val/len(val_total_loss))
+            val_total_loss_epoch.append(avg_loss_val/len(val_total_loss))
             print(f"the validation accuracy in the last iteration of epoch {e}: {val_acc}")
             if e > 20:
                 if (int(val_total_loss_epoch[-1] > 0.999*val_total_loss_epoch[-2]) + int(val_total_loss_epoch[-2] > 0.999*val_total_loss_epoch[-3]) + int(val_total_loss_epoch[-3] > 0.999*val_total_loss_epoch[-4]) + int(val_total_loss_epoch[-4] > 0.999*val_total_loss_epoch[-5]) + int(val_total_loss_epoch[-5] > 0.999*val_total_loss_epoch[-6]) + int(val_total_loss_epoch[-6] > 0.999*val_total_loss_epoch[-7])) > 3:
