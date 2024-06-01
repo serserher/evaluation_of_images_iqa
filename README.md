@@ -28,6 +28,7 @@ The training process begins with the backbone architecture defined in `performan
     dataset_1 = ImageDataset('/path/to/train_data', '/path/to/labels.csv', transforms=transforms_regular)
     ```
 **Disclaimer about the data:** This project is part of a Master's Thesis in collaboration with a company so the data used will be kept private.
+The codes involved in the functioning of the training and testing need to be consistent when it comes to the criteria names, you can obtain that consistency by adjusting the names of the criteria in the whole stack for training and testing (You can find the names of the criteria that I use for my project but you can change it to adapt to your purpose).
 
 - The format for the train data includes:
   - **Images**
@@ -116,8 +117,10 @@ For a complete example of how to use the training and testing pipelines, refer t
     
 **Disclaimer about the data:** This project is part of a Master's Thesis in collaboration with a company so the data used will be kept private.
 
+The codes involved in the functioning of the training and testing need to be consistent when it comes to the criteria names, you can obtain that consistency by adjusting the names of the criteria in the whole stack for training and testing (You can find the names of the criteria that I use for my project but you can change it to adapt to your purpose).
+
 - The format for the train data includes:
-  - **Images**
+  - **Images which's filename is: _(image_number).png**
   - **Labels:** A CSV file with binary ratings for each image
 
 - The format of the rating headers is as follows (example with 100 images and 2 criteria):
