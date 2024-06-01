@@ -27,7 +27,17 @@ The training process begins with the backbone architecture defined in `performan
     ```python
     dataset_1 = ImageDataset('/path/to/train_data', '/path/to/labels.csv', transforms=transforms_regular)
     ```
+**Disclaimer about the data:** This project is part of a Master's Thesis in collaboration with a company so the data used will be kept private.
 
+- The format for the train data includes:
+  - **Images**
+  - **Labels:** A CSV file with binary ratings for each image
+
+- The format of the rating headers is as follows (example with 100 images and 2 criteria):
+  - The format of the rating values is: [values, 1, 0, 1, 1, ..., 1, 0, 1, 0, 0, 0, 0]
+
+  - The format of the rating headers is: [headers, _1.png(name_of_criterion_1), _1.png(name_of_criterion_2), _2.png(name_of_criterion_1), _2.png(name_of_criterion_2), ..., _100.png(name_of_criterion_1), _100.png(name_of_criterion_2)]
+    
 4. Initiate the training process by calling the `train()` function:
 
     ```python
@@ -76,7 +86,74 @@ To assess the trained model, you can use the `TestPipeline` class defined in `Te
 
 For a complete example of how to use the training and testing pipelines, refer to Train_And_Test.py file.
 
-Instructions for the architecture that trains the whole ResNets for each criterion will come soon.
+# Training and Testing Pipeline with full models per criterion.
+
+
+1. Import the `CustomTrainer` class into your script:
+
+    ```python
+    from Custom_Trainer import CustomTrainer
+    ```
+
+    
+2. Define your train and validation datasets using the `ImageDataset` class. For example:
+
+    ```python
+    dataset_1 = ImageDataset('/path/to/train_data', '/path/to/labels.csv', transforms=transforms_regular)
+    ```
+    Instantiate the DataLoaders as normally done in these kinds of Pytorch implementations, an example can be found here:
+   ```python
+   from torch.utils.data import DataLoader
+   # Create DataLoader for training set
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    
+    # Create DataLoader for validation set
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    
+    # Create DataLoader for test set
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+   ```
+    
+**Disclaimer about the data:** This project is part of a Master's Thesis in collaboration with a company so the data used will be kept private.
+
+- The format for the train data includes:
+  - **Images**
+  - **Labels:** A CSV file with binary ratings for each image
+
+- The format of the rating headers is as follows (example with 100 images and 2 criteria):
+  - The format of the rating values is: [values, 1, 0, 1, 1, ..., 1, 0, 1, 0, 0, 0, 0]
+
+  - The format of the rating headers is: [headers, _1.png(name_of_criterion_1), _1.png(name_of_criterion_2), _2.png(name_of_criterion_1), _2.png(name_of_criterion_2), ..., _100.png(name_of_criterion_1), _100.png(name_of_criterion_2)]
+
+  
+3. Instantiate the `CustomTrainer` class with the appropriate parameters, such as train and validation loaders, differently to the previously described multihead approach you have to first instantiate the loaders and that is what you pass as an argument instead of the datasets:
+
+    ```python
+    trainer = CustomTrainer(train_loader, val_loader)
+    ```
+
+4. Once per criterion, initiate the training process by calling the `train()` function from the class:
+    trainer.train('name of the criterion', 'model_path (where you want to save the model)', 'figures_path (where you want to save the figures)', NUM_EPOCHS, INIT_LR)
+
+## Testing
+
+To assess the trained model, you can use the `TestPipeline` class defined in `Testing_Pipeline.py`. Follow these steps:
+
+1. Import the `evaluate_model` function into your script:
+
+    ```python
+    from Evaluate_Model import evaluate_model
+    ```
+
+2. Once per criterion, call the function passing as arguments the test dataloader, the model path where you stored the trained model for the specific criterion, and the output folder where you would like to store the metrics:
+   
+   ```python
+   evaluate_model(test_loader, model_paths, output_folder_test)
+   ```
+## Example Usage
+
+For a complete example of how to use the training and testing pipelines, refer to Train_Test_Models.py file in the "Training full models" folder.
+
 
 
 
